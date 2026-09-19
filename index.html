@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Japanese Lesson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Nicomoji&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #161616;
+      --muted: #666;
+      --line: #d9d9d9;
+      --paper: #fff;
+      --page: #f7f7f5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      width: min(920px, calc(100% - 40px));
+      margin: 56px auto;
+    }
+
+    .lesson {
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    header {
+      padding: 34px 38px 30px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .date {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+      font-weight: 650;
+    }
+
+    .reading {
+      margin-top: 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .japanese {
+      font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    }
+
+    .jp-large {
+      font-size: clamp(24px, 3.2vw, 34px);
+    }
+
+    .romaji {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail {
+      padding: 22px 26px;
+    }
+
+    .detail + .detail {
+      border-left: 1px solid var(--line);
+    }
+
+    .label {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .value {
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .example {
+      padding: 24px 38px 32px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .example-line {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .example-jp {
+      font-size: 27px;
+    }
+
+    /* Stroke-order cards: each character is read left to right, then top to bottom. */
+    .characters {
+      padding: 0 38px 34px;
+    }
+
+    .characters-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 22px 0 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .characters-heading h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .characters-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .kana-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      padding-top: 14px;
+    }
+
+    .kana {
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .kana-top {
+      display: flex;
+      justify-content: center;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kana-top strong { color: var(--ink); font-size: 12px; }
+
+    .kana-body {
+      min-height: 154px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 8px 48px;
+      background:
+        linear-gradient(90deg, transparent 49.5%, #f0f0f0 49.5%, #f0f0f0 50.5%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, #f0f0f0 49.5%, #f0f0f0 50.5%, transparent 50.5%);
+    }
+
+    .stroke-svg {
+      display: block;
+      width: min(100%, 172px);
+    }
+
+    .stroke-ghost path,
+    .stroke-anim path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .stroke-ghost path {
+      stroke: #e9e9e9;
+      stroke-width: 3;
+    }
+
+    .stroke-anim path {
+      stroke: var(--ink);
+      stroke-width: 3.5;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+
+    .stroke-svg.playing .stroke-anim path {
+      animation: strokeDraw .5s ease forwards;
+      animation-delay: calc(var(--i) * .3s);
+    }
+
+    @keyframes strokeDraw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .kana-body { cursor: pointer; }
+
+    .source {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .source a {
+      color: inherit;
+    }
+
+    @media (max-width: 760px) {
+      main { width: min(100% - 24px, 620px); margin: 24px auto; }
+      header { padding: 27px 24px 24px; }
+      .details { grid-template-columns: 1fr; }
+      .detail { padding: 18px 24px; }
+      .detail + .detail {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+      .example { padding: 21px 24px 27px; }
+      .characters { padding: 0 24px 27px; }
+      .kana-grid { grid-template-columns: repeat(5, 1fr); }
+      .kana:nth-child(n+6) { border-top: 1px solid var(--line); }
+      .kana-body { min-height: 125px; }
+    }
+
+    @media (max-width: 420px) {
+      .characters-heading p { display: none; }
+      .kana-body { min-height: 112px; }
+    }
+    /* Open, borderless layout inspired by contemporary Google Fonts specimens */
+    body { background: var(--page); }
+    .lesson { border: 0; background: transparent; }
+    header { border: 0; padding: 34px 38px 28px; }
+    .details { border: 0; background: transparent; }
+    .detail { padding: 22px 26px; }
+    .detail + .detail { border-left: 0; }
+    .characters { padding-bottom: 34px; }
+    .characters-heading { border-bottom: 0; padding-bottom: 18px; }
+    .kana-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 18px; padding-top: 0; }
+    .kana { border: 0; background: transparent; }
+    .kana-top { border: 0; padding: 10px 0 8px; }
+    .kana-body { min-height: 150px; padding: 0; background: transparent; }
+    .font-link { margin: 34px 0 0; color: var(--muted); font-size: 11px; }
+    .font-link a { color: inherit; }
+    @media (max-width: 900px) { .kana-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 24px; } }
+    @media (max-width: 420px) { .kana-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    /* Japanese type specimen-inspired finish */
+    :root { --ink: #171717; --muted: #666; --page: #fff; --line: #d7d7d7; }
+    body { background: #fff; font-family: "LINE Seed JP", "Noto Sans JP", sans-serif; }
+    main { width: min(920px, calc(100% - 40px)); margin: 34px auto 60px; }
+    .lesson { border: 0; background: #fff; }
+    header { padding: 0 0 34px; border: 0; }
+    .date { margin: 0; color: #d64747; font-size: 14px; letter-spacing: .08em; text-transform: none; }
+    .details { grid-template-columns: 1.5fr 1fr 1fr; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .detail { padding: 25px 0; }
+    .detail + .detail { border-left: 0; padding-left: 34px; }
+    .label { margin-bottom: 12px; font-size: 11px; letter-spacing: .16em; }
+    .value { font-size: 19px; }
+    .detail:first-child .value { font-size: 34px; line-height: 1.2; }
+    .script-note {
+      display: inline-block;
+      margin: 0 0 0 8px;
+      padding: 1px 6px;
+      background: #ffeb8a;
+      border-radius: 3px;
+      font-size: 9px;
+      letter-spacing: .06em;
+      vertical-align: middle;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .characters { padding: 34px 0 0; }
+    .characters-heading { padding: 0 0 18px; border: 0; }
+    .characters-heading h2 { font-size: 22px; font-weight: 500; }
+    .kana-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 0; }
+    .kana { border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+    .kana-top { padding: 13px 0 8px; border: 0; color: var(--ink); }
+    .kana-body { min-height: 170px; padding: 0; background: transparent; }
+    .font-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 38px 0 0;
+      font-size: 12px;
+    }
+    .font-link img { height: 20px; width: auto; }
+    .font-link .date-stamp { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .font-link a { color: #d64747; }
+    @media (max-width: 900px) { .kana-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+    @media (max-width: 760px) { main { width: min(100% - 32px, 620px); } }
+    @media (max-width: 600px) { main { width: min(100% - 32px, 520px); } .details { grid-template-columns: 1fr; } .detail, .detail + .detail { padding: 18px 0; } .detail + .detail { border-top: 1px solid var(--line); } .kana-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    /* Lesson-text layouts — shared recipe proven in out1.html (Pattern B, phrase list) and
+       out2.html (Pattern C, vocabulary). All CSS lives here so every seed layout works. */
+    .lesson-content { padding: 34px 0 0; }
+    .lesson-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      padding: 0 0 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .lesson-heading h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.01em; }
+    .lesson-heading .ja { color: var(--muted); font-size: 17px; font-weight: 400; }
+    .lesson-lead { margin: 18px 0 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .lesson-lead strong { color: var(--ink); font-weight: 700; }
+    .phrase-list { list-style: none; margin: 34px 0 0; padding: 0; }
+    .phrase { display: grid; grid-template-columns: 1.5fr 1fr 1fr; }
+    .phrase + .phrase { border-top: 1px solid var(--line); }
+    .phrase .detail { padding: 25px 0; }
+    .phrase .detail + .detail { border-left: 0; padding-left: 34px; }
+    .phrase .label .script-note { margin-left: 0; }
+    .phrase-jp { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-family: "LINE Seed JP", "Noto Sans JP", sans-serif; font-weight: 700; }
+    .phrase-char { width: 60px; }
+    .phrase-jp .kana-body { min-height: 0; padding: 4px; background: transparent; }
+    .lesson-block { margin-top: 42px; }
+    .lesson-block + .lesson-block { border-top: 1px solid var(--line); padding-top: 34px; }
+    .lesson-block-head { margin: 0 0 14px; font-size: 17px; font-weight: 700; letter-spacing: .02em; }
+    .lesson-block-head .ja { margin-left: 10px; color: var(--muted); font-size: 14px; font-weight: 400; }
+    .lesson-goals { margin: 0; padding: 0; list-style: none; }
+    .lesson-goals li { position: relative; margin: 0 0 10px; padding-left: 20px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .lesson-goals li::before { content: "›"; position: absolute; left: 0; color: #d64747; }
+    .lesson-goals em { color: var(--ink); font-style: italic; }
+    .word-list { margin: 18px 0 0; list-style: none; padding: 0; }
+    .word { display: grid; grid-template-columns: 1.4fr .8fr 1fr 1fr; }
+    .word + .word { border-top: 1px solid var(--line); }
+    .word .detail { padding: 22px 0; }
+    .word .detail + .detail { border-left: 0; padding-left: 26px; }
+    .word .detail:nth-of-type(2) .value { font-size: 24px; line-height: 1.25; }
+    .word-jp { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-family: "LINE Seed JP", "Noto Sans JP", sans-serif; font-weight: 700; }
+    .word-jp .kana-body { min-height: 0; padding: 4px; background: transparent; }
+    .word .label .script-note { margin-left: 0; }
+    .word-jp .phrase-char { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .word-jp .phrase-sound { font-size: 11px; font-weight: 600; letter-spacing: .04em; color: var(--muted); }
+    .lesson-note { margin: 18px 0 0; padding: 12px 16px; background: #faf9f5; border-left: 2px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .lesson-note strong { color: var(--ink); }
+    @media (max-width: 600px) {
+      .phrase, .word { grid-template-columns: 1fr; }
+      .word .detail, .word .detail + .detail { padding: 16px 0; }
+      .word .detail + .detail { padding-left: 0; }
+      .lesson-block-head { font-size: 16px; }
+      .lesson-heading h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article class="lesson">
+      <header>
+        <p class="date">2026-09-19 · Japanese Pronunciation</p>
+      </header>
+
+      <!-- Pattern A — kana card lesson: .details band + .characters/.kana-grid (see output.html). -->
+      
+
+      
+
+      <!-- Pattern B — phrase list (see out1.html). Delete Pattern A and fill the tokens.
+           .phrase-jp value: one .phrase-char card per character, in reading order. -->
+      <section class="lesson-content" aria-label="New phrases">
+        <div class="lesson-heading">
+          <h2>Japanese Pronunciation <span class="ja" lang="ja">にほんごの はつおん</span></h2>
+        </div>
+        <p class="lesson-lead"><strong>Pre-Lesson A — </strong>Japanese has far fewer sounds than English. Mastery starts with the five basic vowels: a (father), i (see), u (zoo), e (men), o (boat). Most sounds are consistent, making it easier for English speakers to learn natural pronunciation.</p>
+
+        <ul class="phrase-list">
+            <li class="phrase">
+                <div class="detail"><div class="label"><span class="script-note">Hiragana</span></div><div class="value phrase-jp" lang="ja"><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03042-s1"/><path d="kvg:03042-s2"/><path d="kvg:03042-s3"/></g><g class="stroke-anim"><path d="kvg:03042-s1" pathLength="1" style="--i: 0"/><path d="kvg:03042-s2" pathLength="1" style="--i: 1"/><path d="kvg:03042-s3" pathLength="1" style="--i: 2"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:0304b-s1"/><path d="kvg:0304b-s2"/><path d="kvg:0304b-s3"/></g><g class="stroke-anim"><path d="kvg:0304b-s1" pathLength="1" style="--i: 0"/><path d="kvg:0304b-s2" pathLength="1" style="--i: 1"/><path d="kvg:0304b-s3" pathLength="1" style="--i: 2"/></g></svg></div></span></span></div></div>
+                <div class="detail"><div class="label">Pronunciation</div><div class="value">aka</div></div>
+                <div class="detail"><div class="label">English</div><div class="value">red</div></div>
+            </li>
+            <li class="phrase">
+                <div class="detail"><div class="label"><span class="script-note">Hiragana</span></div><div class="value phrase-jp" lang="ja"><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03044-s1"/><path d="kvg:03044-s2"/></g><g class="stroke-anim"><path d="kvg:03044-s1" pathLength="1" style="--i: 0"/><path d="kvg:03044-s2" pathLength="1" style="--i: 1"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:0306e-s1"/></g><g class="stroke-anim"><path d="kvg:0306e-s1" pathLength="1" style="--i: 0"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03061-s1"/><path d="kvg:03061-s2"/></g><g class="stroke-anim"><path d="kvg:03061-s1" pathLength="1" style="--i: 0"/><path d="kvg:03061-s2" pathLength="1" style="--i: 1"/></g></svg></div></span></span></div></div>
+                <div class="detail"><div class="label">Pronunciation</div><div class="value">inochi</div></div>
+                <div class="detail"><div class="label">English</div><div class="value">life</div></div>
+            </li>
+            <li class="phrase">
+                <div class="detail"><div class="label"><span class="script-note">Hiragana</span></div><div class="value phrase-jp" lang="ja"><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03046-s1"/><path d="kvg:03046-s2"/></g><g class="stroke-anim"><path d="kvg:03046-s1" pathLength="1" style="--i: 0"/><path d="kvg:03046-s2" pathLength="1" style="--i: 1"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:0307e-s1"/><path d="kvg:0307e-s2"/><path d="kvg:0307e-s3"/></g><g class="stroke-anim"><path d="kvg:0307e-s1" pathLength="1" style="--i: 0"/><path d="kvg:0307e-s2" pathLength="1" style="--i: 1"/><path d="kvg:0307e-s3" pathLength="1" style="--i: 2"/></g></svg></div></span></span></div></div>
+                <div class="detail"><div class="label">Pronunciation</div><div class="value">uma</div></div>
+                <div class="detail"><div class="label">English</div><div class="value">horse</div></div>
+            </li>
+            <li class="phrase">
+                <div class="detail"><div class="label"><span class="script-note">Hiragana</span></div><div class="value phrase-jp" lang="ja"><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03048-s1"/><path d="kvg:03048-s2"/></g><g class="stroke-anim"><path d="kvg:03048-s1" pathLength="1" style="--i: 0"/><path d="kvg:03048-s2" pathLength="1" style="--i: 1"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03073-s1"/><path d="kvg:03073-s2"/><path d="kvg:03073-s3"/></g><g class="stroke-anim"><path d="kvg:03073-s1" pathLength="1" style="--i: 0"/><path d="kvg:03073-s2" pathLength="1" style="--i: 1"/><path d="kvg:03073-s3" pathLength="1" style="--i: 2"/></g></svg></div></span></span></div></div>
+                <div class="detail"><div class="label">Pronunciation</div><div class="value">ebi</div></div>
+                <div class="detail"><div class="label">English</div><div class="value">shrimp</div></div>
+            </li>
+            <li class="phrase">
+                <div class="detail"><div class="label"><span class="script-note">Hiragana</span></div><div class="value phrase-jp" lang="ja"><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:0304a-s1"/><path d="kvg:0304a-s2"/><path d="kvg:0304a-s3"/></g><g class="stroke-anim"><path d="kvg:0304a-s1" pathLength="1" style="--i: 0"/><path d="kvg:0304a-s2" pathLength="1" style="--i: 1"/><path d="kvg:0304a-s3" pathLength="1" style="--i: 2"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03068-s1"/><path d="kvg:03068-s2"/></g><g class="stroke-anim"><path d="kvg:03068-s1" pathLength="1" style="--i: 0"/><path d="kvg:03068-s2" pathLength="1" style="--i: 1"/></g></svg></div></span></span><span class="phrase-char"><span class="kana-body"><div class="kana-body"><svg class="stroke-svg" viewBox="0 0 109 109" role="img"><g class="stroke-ghost"><path d="kvg:03053-s1"/><path d="kvg:03053-s2"/></g><g class="stroke-anim"><path d="kvg:03053-s1" pathLength="1" style="--i: 0"/><path d="kvg:03053-s2" pathLength="1" style="--i: 1"/></g></svg></div></span></span></div></div>
+                <div class="detail"><div class="label">Pronunciation</div><div class="value">otoko</div></div>
+                <div class="detail"><div class="label">English</div><div class="value">man</div></div>
+            </li></ul>
+      </section>
+
+      <!-- Pattern C — vocabulary table (see out2.html). Delete Patterns A and B and fill the tokens.
+           Hiragana cell: one .phrase-char card per character, each with a .phrase-sound label under it.
+           Kanji cell stays plain text — there is no kanji stroke data in kvg/. -->
+      
+
+      <p class="font-link"><img src="assets/stamp.jpeg" alt=""><span class="date-stamp">19-09-2026 17:41</span><a href="https://googlefonts.github.io/japanese/#nicomoji" target="_blank" rel="noopener">G Fonts Japanese types</a></p>
+    </article>
+  </main>
+  <script>
+    document.querySelectorAll('.kana-body').forEach(function (body) {
+      body.addEventListener('click', function () {
+        var svg = body.querySelector('.stroke-svg');
+        svg.classList.remove('playing');
+        void svg.getBoundingClientRect();
+        svg.classList.add('playing');
+      });
+    });
+    (function () {
+      var dateEl = document.querySelector('.date');
+      var meaning = document.querySelector('.details .detail:last-child .value');
+      if (!meaning && dateEl) {
+        var split = dateEl.textContent.trim().split('·');
+        if (split[1]) meaning = { textContent: split[1].trim() };
+      }
+      if (dateEl && meaning) {
+        var m = dateEl.textContent.trim().split('·')[0].trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        if (m) {
+          document.title = m[3] + ' ' + months[parseInt(m[2], 10) - 1] + ' ' + m[1].slice(2) + ' - ' + meaning.textContent.trim();
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
