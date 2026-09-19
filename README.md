@@ -1,4 +1,4 @@
 ### Daily Japanese
 
-- **Basic Counting**
-- **19-09-2026 18:22**
+- **First Meeting**
+- **19-09-2026 18:24**
