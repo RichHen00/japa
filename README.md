@@ -1,4 +1,4 @@
 ### Daily Japanese
 
-- **Japanese Pronunciation**
-- **19-09-2026 18:25**
+- **Basic Counting**
+- **19-09-2026 18:31**
